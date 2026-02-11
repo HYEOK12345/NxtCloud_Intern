@@ -1,4 +1,4 @@
-# NxtCloud_Intern
+# NxtCloud_Project
 
 # 🧾 영수증 분석 시스템 (Receipt Analysis System)
 
