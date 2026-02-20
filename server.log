@@ -1,9 +1,0 @@
-INFO:     Will watch for changes in these directories: ['/home/ec2-user/receipt']
-INFO:     Uvicorn running on http://0.0.0.0:8000 (Press CTRL+C to quit)
-INFO:     Started reloader process [4445] using StatReload
-INFO:     Started server process [4448]
-INFO:     Waiting for application startup.
-INFO:     Application startup complete.
-INFO:     211.245.92.134:12581 - "GET /api/receipts HTTP/1.1" 200 OK
-INFO:     211.245.92.134:5431 - "GET /api/receipts HTTP/1.1" 200 OK
-INFO:     211.245.92.134:2355 - "POST /api/receipts/analyze HTTP/1.1" 500 Internal Server Error
