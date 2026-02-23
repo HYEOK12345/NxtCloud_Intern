@@ -365,7 +365,7 @@ AWS EC2 인스턴스 2개를 생성하여 Client(프론트엔드)와 Server(백�
 | --- | --- | --- |
 | 인스턴스 이름 | snow-receipt-client | snow-receipt-server |
 | AMI | nxtcloud-ami | nxtcloud-ami |
-| 인스턴스 유형 | t3.micro | t3.micro |
+| 인스턴스 유형 | t3.small | t3.small |
 | 키 페어 | snow.sa-instance-key.pem | snow.sa-instance-key.pem |
 | 보안 그룹 | snow-53-sg (3000, 8000 포트 개방) | snow-53-sg |
 | 역할 | React 프론트엔드 호스팅 | FastAPI 백엔드 호스팅 |
