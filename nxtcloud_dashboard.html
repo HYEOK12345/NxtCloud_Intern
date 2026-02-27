@@ -715,69 +715,6 @@ function toggleDay(date, hasPage) {
   renderCalendar();
 }
 
-// Notion template
-const template = `# 📚 NxtCloud 학습 대시보드
-
----
-
-## 📖 Contents (학습 콘텐츠)
-
-### 🤖 AI / 프롬프트
-- [NxtCloud_Contents_1] 프롬프트 엔지니어링 개요
-- [NxtCloud_Contents_3] 자율 코딩 에이전트 'Devin' 기초
-- [NxtCloud_Contents_5] 클로드 최적화 가이드
-- [NxtCloud_Contents_9] LLM 컨텍스트 길이 증가 성능 저하 연구
-
-### 🔧 개발 / 아키텍처
-- [NxtCloud_Contents_2] MCP 프로토콜 소개
-- [NxtCloud_Contents_4] 에이전트가 쓰기 좋은 도구 만들기
-
-### 🔒 보안
-- [NxtCloud_Contents_6] 정적 vs 동적 애플리케이션 보안 테스트
-- [NxtCloud_Contents_7] 프롬프트 인젝션 → GitHub Copilot RCE
-- [NxtCloud_Contents_8] AI 에이전트 신원 위조 및 사칭 공격
-- [NxtCloud_Contents_10] 2025 웹 보안 위험 Top 10
-
----
-
-## ⚡ Tasks (과제 및 프로젝트)
-
-### 📌 과제
-- [NxtCloud_Task] 30DaysOfAI
-- [NxtCloud_Task] 3Tier-Architecture
-- [NxtCloud_Task] 개인 프로젝트 질의응답
-
-### 🛠 개인 프로젝트
-- [NxtCloud_Task] 개인 프로젝트 파이프라인
-- [NxtCloud_Task] 개인 프로젝트 실험
-- [NxtCloud_Task] 개인 프로젝트 Github 배포
-- [NxtCloud_Task] SAM2 기반 자동 객체 분할 웹 QA 보고서
-
----
-
-## 📅 Weekly 기록
-
-| Week | 날짜 범위 | 기록 |
-|------|-----------|------|
-| Week 1 | 260105 ~ 260109 | Days 1-5 |
-| Week 2 | 260112 ~ 260116 | Days 1-5 |
-| Week 3 | 260119 ~ 260123 | Days 1-5 |
-| Week 4 | 260126 ~ 260130 | Days 1-5 |
-| Week 5 | 260202 ~ 260206 | Days 1-5 |
-| Week 6 | 260209 ~ 260212 | Days 1-4 |
-| Week 7 | 260219 ~ 260220 | Days 1-2 |`;
-
-document.getElementById('template-text').textContent = template;
-
-function copyTemplate() {
-  navigator.clipboard.writeText(template).then(() => {
-    const btn = document.querySelector('.copy-btn');
-    btn.textContent = '✅ 복사됨!';
-    setTimeout(() => { btn.innerHTML = '<span>📋</span> 클립보드에 복사'; }, 2000);
-  });
-}
-
-renderCalendar();
 </script>
 </body>
 </html>
