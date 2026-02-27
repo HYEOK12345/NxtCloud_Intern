@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NxtCloud Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Pretendard:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d0f14;
+    --surface: #13161e;
+    --surface2: #1a1e29;
+    --border: #252a38;
+    --accent: #4f8cff;
+    --accent2: #a78bfa;
+    --accent3: #34d399;
+    --accent4: #fb923c;
+    --text: #e8ecf4;
+    --text-muted: #6b7490;
+    --text-dim: #3d4460;
+    --done: #34d399;
+    --notdone: #374151;
+    --tag-bg: #1e2535;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Pretendard', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background grid */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(79,140,255,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,140,255,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 48px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  .header {
+    margin-bottom: 56px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .header-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.2em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    line-height: 1.1;
+    background: linear-gradient(135deg, #e8ecf4 0%, #6b7490 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .header-sub {
+    margin-top: 12px;
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 300;
+  }
+
+  /* Stats bar */
+  .stats {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+  .stat-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px 24px;
+    flex: 1;
+    min-width: 140px;
+  }
+  .stat-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 28px;
+    font-weight: 500;
+    color: var(--text);
+  }
+  .stat-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 4px;
+    letter-spacing: 0.05em;
+  }
+  .stat-card.accent .stat-num { color: var(--accent); }
+  .stat-card.accent2 .stat-num { color: var(--accent2); }
+  .stat-card.accent3 .stat-num { color: var(--accent3); }
+
+  /* Section titles */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .section-title {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* Grid layout */
+  .grid-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    margin-bottom: 48px;
+  }
+  @media (max-width: 768px) { .grid-2 { grid-template-columns: 1fr; } }
+
+  /* Card base */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+  }
+  .card-header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .card-icon {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+  }
+  .card-title {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .card-count {
+    margin-left: auto;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-muted);
+    background: var(--tag-bg);
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+
+  /* Contents list */
+  .item-list {
+    padding: 8px 0;
+  }
+  .item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 10px 24px;
+    border-bottom: 1px solid var(--border);
+    transition: background 0.15s;
+    text-decoration: none;
+    color: inherit;
+  }
+  .item:last-child { border-bottom: none; }
+  .item:hover { background: var(--surface2); }
+  .item-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    color: var(--text-dim);
+    min-width: 24px;
+    padding-top: 2px;
+  }
+  .item-text {
+    font-size: 13px;
+    color: var(--text);
+    line-height: 1.5;
+    flex: 1;
+  }
+  .item-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+  .tag-ai { background: rgba(79,140,255,0.12); color: var(--accent); }
+  .tag-sec { background: rgba(251,146,60,0.12); color: var(--accent4); }
+  .tag-dev { background: rgba(167,139,250,0.12); color: var(--accent2); }
+  .tag-task { background: rgba(52,211,153,0.12); color: var(--accent3); }
+
+  /* Calendar section */
+  .calendar-section {
+    margin-bottom: 48px;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+  .calendar-wrap {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+  }
+  .weeks-container {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  .week-group {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .week-label {
+    padding: 12px 20px;
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    color: var(--text-muted);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .week-progress {
+    margin-left: auto;
+    display: flex;
+    gap: 3px;
+  }
+  .week-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--done);
+  }
+  .week-dot.empty { background: var(--notdone); }
+
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+  }
+  .day-cell {
+    padding: 14px 16px;
+    border-right: 1px solid var(--border);
+    cursor: pointer;
+    transition: background 0.15s;
+    position: relative;
+  }
+  .day-cell:last-child { border-right: none; }
+  .day-cell:hover { background: var(--surface); }
+  .day-cell.done { background: rgba(52,211,153,0.04); }
+  .day-cell.done::after {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--done);
+    border-radius: 0 0 2px 2px;
+  }
+  .day-date {
+    font-family: 'DM Mono', monospace;
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 6px;
+  }
+  .day-name {
+    font-size: 11px;
+    color: var(--text-dim);
+    margin-bottom: 8px;
+  }
+  .day-status {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+  }
+  .status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--done);
+    flex-shrink: 0;
+  }
+  .status-dot.empty { background: var(--notdone); }
+  .status-text { color: var(--text-muted); }
+  .day-link {
+    display: inline-block;
+    margin-top: 6px;
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--accent);
+    text-decoration: none;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+  .day-cell:hover .day-link { opacity: 1; }
+
+  /* Notion template box */
+  .notion-section {
+    animation: fadeUp 0.6s 0.4s ease both;
+    margin-bottom: 48px;
+  }
+  .notion-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+  }
+  .notion-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: 20px;
+    margin-bottom: 8px;
+  }
+  .notion-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+  }
+  .notion-template {
+    background: #1a1d24;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    font-family: 'DM Mono', monospace;
+    font-size: 12.5px;
+    line-height: 1.9;
+    color: #c8d0e0;
+    white-space: pre-wrap;
+    word-break: break-all;
+  }
+  .notion-template .nt-h1 { color: var(--text); font-size: 16px; font-weight: 500; }
+  .notion-template .nt-h2 { color: var(--accent); }
+  .notion-template .nt-h3 { color: var(--accent2); }
+  .notion-template .nt-tag { color: var(--accent3); }
+  .notion-template .nt-muted { color: var(--text-dim); }
+
+  .copy-btn {
+    margin-top: 16px;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-family: 'Pretendard', sans-serif;
+  }
+  .copy-btn:hover { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .contents-section { animation: fadeUp 0.6s 0.15s ease both; }
+  .tasks-section { animation: fadeUp 0.6s 0.2s ease both; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <div class="header">
+    <div class="header-label">Snow.sa | NxtCloud</div>
+    <h1>프로젝트 대시보드</h1>
+    <div class="header-sub">콘텐츠 · 과제 · 주간 활동 기록</div>
+  </div>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="stat-card accent">
+      <div class="stat-num">10</div>
+      <div class="stat-label">학습 콘텐츠</div>
+    </div>
+    <div class="stat-card accent2">
+      <div class="stat-num">7</div>
+      <div class="stat-label">Task 항목</div>
+    </div>
+    <div class="stat-card accent3">
+      <div class="stat-num" id="total-days">42</div>
+      <div class="stat-label">총 활동 일수</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num" id="done-days">42</div>
+      <div class="stat-label">완료 기록</div>
+    </div>
+  </div>
+
+  <!-- Contents + Tasks grid -->
+  <div class="grid-2">
+
+    <!-- Contents -->
+    <div class="contents-section">
+      <div class="section-header">
+        <span class="section-title">📚 Contents</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(79,140,255,0.1);">📖</div>
+          <span class="card-title">학습 콘텐츠</span>
+          <span class="card-count">10 pages</span>
+        </div>
+        <div class="item-list">
+          <a class="item" href="https://www.notion.so/NxtCloud_Contents_2-MCP-2e32156ceb5f8004b076ff570889f0d5" target="_blank">
+            <span class="item-num">01</span>
+            <span class="item-text">프롬프트 엔지니어링 개요</span>
+            <span class="item-tag tag-ai">AI</span>
+          </a>
+          <a class="item" href="https://www.notion.so/NxtCloud_Contents_2-MCP-2e32156ceb5f8004b076ff570889f0d5" target="_blank">
+            <span class="item-num">02</span>
+            <span class="item-text">MCP 프로토콜 소개</span>
+            <span class="item-tag tag-dev">Dev</span>
+          </a>
+          <a class="item" href="https://www.notion.so/NxtCloud_Contents_3-Devin-2e92156ceb5f80518e4df12a8d246067" target="_blank">
+            <span class="item-num">03</span>
+            <span class="item-text">자율 코딩 에이전트 'Devin' 기초</span>
+            <span class="item-tag tag-ai">AI</span>
+          </a>
+          <a class="item" href="https://www.notion.so/NxtCloud_Contents_4-2ed2156ceb5f8094bfefe588fbbbeb05" target="_blank">
+            <span class="item-num">04</span>
+            <span class="item-text">에이전트가 쓰기 좋은 도구 만들기</span>
+            <span class="item-tag tag-dev">Dev</span>
+          </a>
+          <a class="item" href="https://www.notion.so/NxtCloud_Contents_5-2f12156ceb5f80f3824dd23639852abc" target="_blank">
+            <span class="item-num">05</span>
+            <span class="item-text">클로드 최적화 가이드</span>
+            <span class="item-tag tag-ai">AI</span>
+          </a>
+          <a class="item" href="https://www.notion.so/NxtCloud_Contents_6-vs-2f82156ceb5f806f8011f3c894ac46e8" target="_blank">
+            <span class="item-num">06</span>
+            <span class="item-text">정적 vs 동적 애플리케이션 보안 테스트</span>
+            <span class="item-tag tag-sec">Security</span>
+          </a>
+          <a class="item" href="https://www.notion.so/NxtCloud_Contents_7-GitHub-Copilot-2fc2156ceb5f80df973ef7bec5b4fa77" target="_blank">
+            <span class="item-num">07</span>
+            <span class="item-text">프롬프트 인젝션 → GitHub Copilot RCE</span>
+            <span class="item-tag tag-sec">Security</span>
+          </a>
+          <a class="item" href="https://www.notion.so/NxtCloud_Contents_8-AI-2fe2156ceb5f8013a8cdfa99c9918d07" target="_blank">
+            <span class="item-num">08</span>
+            <span class="item-text">AI 에이전트 신원 위조 및 사칭 공격</span>
+            <span class="item-tag tag-sec">Security</span>
+          </a>
+          <a class="item" href="https://www.notion.so/NxtCloud_Contents_9-LLM-3022156ceb5f803f9a91ded9320766bb" target="_blank">
+            <span class="item-num">09</span>
+            <span class="item-text">LLM 컨텍스트 길이 증가 성능 저하 연구</span>
+            <span class="item-tag tag-ai">AI</span>
+          </a>
+          <a class="item" href="https://www.notion.so/NxtCloud_Contents_10-2025-10-3052156ceb5f806891cfc3ece243f83c" target="_blank">
+            <span class="item-num">10</span>
+            <span class="item-text">2025 웹 애플리케이션 보안 위험 Top 10</span>
+            <span class="item-tag tag-sec">Security</span>
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tasks -->
+    <div class="tasks-section">
+      <div class="section-header">
+        <span class="section-title">⚡ Tasks</span>
+        <div class="section-line"></div>
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-icon" style="background:rgba(52,211,153,0.1);">🛠</div>
+          <span class="card-title">과제 및 프로젝트</span>
+          <span class="card-count">7 pages</span>
+        </div>
+        <div class="item-list">
+          <a class="item" href="https://www.notion.so/NxtCloud_Task-30DaysOfAI-2e52156ceb5f80ae91cfed7113ea2ef2" target="_blank">
+            <span class="item-num">T1</span>
+            <span class="item-text">30DaysOfAI</span>
+            <span class="item-tag tag-task">Task</span>
+          </a>
+          <a class="item" href="https://www.notion.so/NxtCloud_Task-3Tier-Architeture-2e52156ceb5f80b0b1b8cb9248bb2c3b" target="_blank">
+            <span class="item-num">T2</span>
+            <span class="item-text">3Tier-Architecture</span>
+            <span class="item-tag tag-task">Task</span>
+          </a>
+          <a class="item" href="https://www.notion.so/NxtCloud_Task-2e52156ceb5f80a59ed1d57f5c94138f" target="_blank">
+            <span class="item-num">T3</span>
+            <span class="item-text">개인 프로젝트 질의응답</span>
+            <span class="item-tag tag-task">Task</span>
+          </a>
+          <a class="item" href="https://www.notion.so/NxtCloud_Task-2e92156ceb5f80ebbcbbe18784bfb144" target="_blank">
+            <span class="item-num">T4</span>
+            <span class="item-text">개인 프로젝트 파이프라인</span>
+            <span class="item-tag tag-dev">Dev</span>
+          </a>
+          <a class="item" href="https://www.notion.so/NxtCloud_Task-2ea2156ceb5f80c48c6efb5f5d37bb3c" target="_blank">
+            <span class="item-num">T5</span>
+            <span class="item-text">개인 프로젝트 실험</span>
+            <span class="item-tag tag-dev">Dev</span>
+          </a>
+          <a class="item" href="https://www.notion.so/NxtCloud_Task-SAM2-QA-2f62156ceb5f8045bb66fb0a768d7a15" target="_blank">
+            <span class="item-num">T6</span>
+            <span class="item-text">SAM2 기반 자동 객체 분할 웹 QA 보고서</span>
+            <span class="item-tag tag-sec">QA</span>
+          </a>
+          <a class="item" href="https://www.notion.so/NxtCloud_Task-Github-2fe2156ceb5f80bab927f3d1e95b9aad" target="_blank">
+            <span class="item-num">T7</span>
+            <span class="item-text">개인 프로젝트 Github 배포</span>
+            <span class="item-tag tag-dev">Dev</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Calendar -->
+  <div class="calendar-section">
+    <div class="section-header">
+      <span class="section-title">📅 Weekly Calendar</span>
+      <div class="section-line"></div>
+    </div>
+    <div class="calendar-wrap">
+      <div class="weeks-container" id="weeks"></div>
+    </div>
+  </div>
+
+
+
+</div>
+
+<script>
+const weeks = [
+  {
+    label: "Week 1",
+    days: [
+      { date: "260105", day: "Mon", link: "https://www.notion.so/Weekly-1-Days_1-260105-2df2156ceb5f807ab1bae936fc40e6a4" },
+      { date: "260106", day: "Tue", link: "https://www.notion.so/Weekly-1-Days_2-260106-2e02156ceb5f80f09a77d1302e7779f1" },
+      { date: "260107", day: "Wed", link: "https://www.notion.so/Weekly-1-Days_3-260107-2e12156ceb5f80099c09f35715733613" },
+      { date: "260108", day: "Thu", link: "https://www.notion.so/Weekly-1-Days_4-260108-2e12156ceb5f8036b14afc12953e9b2b" },
+      { date: "260109", day: "Fri", link: "https://www.notion.so/Weekly-1-Days_5-260109-2e22156ceb5f80fbb10efd08d516aa51" },
+    ]
+  },
+  {
+    label: "Week 2",
+    days: [
+      { date: "260112", day: "Mon", link: "https://www.notion.so/Weekly-2-Dyas_1-260112-2e32156ceb5f8055a1c8fa7f179dd330" },
+      { date: "260113", day: "Tue", link: "https://www.notion.so/Weekly-2-Dyas_2-260113-2e62156ceb5f8061bec1d7f21ba9b6dc" },
+      { date: "260114", day: "Wed", link: "https://www.notion.so/Weekly-2-Dyas_3-260114-2e72156ceb5f80b28463ee51e8511a0e" },
+      { date: "260115", day: "Thu", link: "https://www.notion.so/Weekly-2-Dyas_4-260115-2e82156ceb5f809cb2b2f56aee7ba792" },
+      { date: "260116", day: "Fri", link: "https://www.notion.so/Weekly-2-Dyas_5-260116-2e92156ceb5f8054bf87eb727f7e8829" },
+    ]
+  },
+  {
+    label: "Week 3",
+    days: [
+      { date: "260119", day: "Mon", link: "https://www.notion.so/Weekly-3-Dyas_1-260119-2ea2156ceb5f8049a950dd978365d28e" },
+      { date: "260120", day: "Tue", link: "https://www.notion.so/Weekly-3-Dyas_2-260120-2ee2156ceb5f806e988fc66fa8a42080" },
+      { date: "260121", day: "Wed", link: "https://www.notion.so/Weekly-3-Dyas_3-260121-2ef2156ceb5f802eae7bd893a5febee4" },
+      { date: "260122", day: "Thu", link: "https://www.notion.so/Weekly-3-Dyas_4-260122-2f02156ceb5f80e49e4bc2c30cb71cdf" },
+      { date: "260123", day: "Fri", link: "https://www.notion.so/Weekly-3-Dyas_5-260123-2f02156ceb5f80cda7e5de9606617848" },
+    ]
+  },
+  {
+    label: "Week 4",
+    days: [
+      { date: "260126", day: "Mon", link: "https://www.notion.so/Weekly-4-Dyas_1-260126-2f42156ceb5f809c8174c2480e4559ed" },
+      { date: "260127", day: "Tue", link: "https://www.notion.so/Weekly-4-Dyas_2-260127-2f52156ceb5f80fe9e99e459bd11b72f" },
+      { date: "260128", day: "Wed", link: "https://www.notion.so/Weekly-4-Dyas_3-260128-2f62156ceb5f8074abe8f54b98396c5c" },
+      { date: "260129", day: "Thu", link: "https://www.notion.so/Weekly-4-Dyas_4-260129-2f72156ceb5f8019a401ddf9fb19f9f0" },
+      { date: "260130", day: "Fri", link: "https://www.notion.so/Weekly-4-Dyas_5-260130-2f82156ceb5f80f58b7af02d66ece4af" },
+    ]
+  },
+  {
+    label: "Week 5",
+    days: [
+      { date: "260202", day: "Mon", link: "https://www.notion.so/Weekly-5-Dyas_1-260202-2fb2156ceb5f8054a7c8ef23c0aec503" },
+      { date: "260203", day: "Tue", link: "https://www.notion.so/Weekly-5-Dyas_2-260203-2fc2156ceb5f80168f0bc279f7551ef4" },
+      { date: "260204", day: "Wed", link: "https://www.notion.so/Weekly-5-Dyas_3-260204-2fd2156ceb5f80299b35c665d4d57bad" },
+      { date: "260205", day: "Thu", link: "https://www.notion.so/Weekly-5-Dyas_4-260205-2fe2156ceb5f80678f9de6492044dd87" },
+      { date: "260206", day: "Fri", link: "https://www.notion.so/Weekly-5-Dyas_5-260206-2ff2156ceb5f803f9a3efd750e46eb2b" },
+    ]
+  },
+  {
+    label: "Week 6",
+    days: [
+      { date: "260209", day: "Mon", link: "https://www.notion.so/Weekly-6-Dyas_1-260209-3022156ceb5f8070af00ca05f8f07489" },
+      { date: "260210", day: "Tue", link: "https://www.notion.so/Weekly-6-Dyas_2-260210-3032156ceb5f803d801dff148cb80f61" },
+      { date: "260211", day: "Wed", link: "https://www.notion.so/Weekly-6-Dyas_3-260211-3042156ceb5f809d98dbc3d8363b1b62" },
+      { date: "260212", day: "Thu", link: "https://www.notion.so/Weekly-6-Dyas_4-260212-3052156ceb5f80b1840ffacd59ae37db" },
+      { date: "260213", day: "Fri", link: null },
+    ]
+  },
+  {
+    label: "Week 7",
+    days: [
+      { date: "260219", day: "Mon", link: "https://www.notion.so/Weekly-7-Dyas_1-260219-30c2156ceb5f8078a1b4facb7c010992" },
+      { date: "260220", day: "Tue", link: "https://www.notion.so/Weekly-7-Dyas_2-260220-30d2156ceb5f800c8949ee059a962dd3" },
+      { date: "260221", day: "Wed", link: null },
+      { date: "260222", day: "Thu", link: null },
+      { date: "260223", day: "Fri", link: null },
+    ]
+  },
+];
+
+// Load done state from localStorage
+function getState() {
+  try { return JSON.parse(localStorage.getItem('nxt_done') || '{}'); } catch { return {}; }
+}
+function saveState(s) {
+  try { localStorage.setItem('nxt_done', JSON.stringify(s)); } catch {}
+}
+
+function renderCalendar() {
+  const state = getState();
+  const container = document.getElementById('weeks');
+  container.innerHTML = '';
+  let totalDone = 0, totalExist = 0;
+
+  weeks.forEach(week => {
+    const existDays = week.days.filter(d => d.link !== null);
+    const doneDays = existDays.filter(d => state[d.date]);
+    totalExist += existDays.length;
+    totalDone += doneDays.length;
+
+    const wDiv = document.createElement('div');
+    wDiv.className = 'week-group';
+
+    const dots = week.days.map(d => {
+      if (!d.link) return `<span class="week-dot empty"></span>`;
+      return `<span class="week-dot${state[d.date] ? '' : ' empty'}"></span>`;
+    }).join('');
+
+    wDiv.innerHTML = `
+      <div class="week-label">
+        ${week.label}
+        <div class="week-progress">${dots}</div>
+        <span style="font-size:10px;color:var(--text-dim);margin-left:8px;">${doneDays.length}/${existDays.length}</span>
+      </div>
+      <div class="days-grid">
+        ${week.days.map(d => {
+          const done = state[d.date];
+          const hasPage = d.link !== null;
+          return `
+          <div class="day-cell${done ? ' done' : ''}" onclick="toggleDay('${d.date}', ${hasPage})" data-date="${d.date}">
+            <div class="day-date">${d.date.slice(2,4)}/${d.date.slice(4,6)}/${d.date.slice(0,2)}</div>
+            <div class="day-name">${d.day}</div>
+            <div class="day-status">
+              <span class="status-dot${done ? '' : ' empty'}"></span>
+              <span class="status-text">${!hasPage ? '—' : done ? '완료' : '미완료'}</span>
+            </div>
+            ${hasPage && d.link ? `<a class="day-link" href="${d.link}" target="_blank" onclick="event.stopPropagation()">↗ 열기</a>` : ''}
+          </div>`;
+        }).join('')}
+      </div>`;
+    container.appendChild(wDiv);
+  });
+
+  document.getElementById('done-days').textContent = totalDone;
+  document.getElementById('total-days').textContent = totalExist;
+}
+
+function toggleDay(date, hasPage) {
+  if (!hasPage) return;
+  const state = getState();
+  state[date] = !state[date];
+  saveState(state);
+  renderCalendar();
+}
+
+renderCalendar();
+</script>
+</body>
+</html>
